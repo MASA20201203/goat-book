@@ -37,7 +37,10 @@ class NewVisitorTest(unittest.TestCase):
 
         table = self.browser.find_element(By.ID, "id_list_table")
         rows = table.find_elements(By.TAG_NAME, "tr")
-        self.assertTrue(any(row.text == "1: 孔雀の羽を買う" for row in rows))
+        self.assertTrue(
+            any(row.text == "1: 孔雀の羽を買う" for row in rows),
+            "新しいToDo項目がテーブルに表示されませんでした",
+        )
 
         # 別の項目を追加するよう促すテキストボックスが残っている。
         # 彼女は 「孔雀の羽を使ってハエを作る 」と入力した。
