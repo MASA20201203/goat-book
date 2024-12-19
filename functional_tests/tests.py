@@ -2,8 +2,10 @@ from django.test import LiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import WebDriverException
 import time
-import unittest
+
+MAX_WAIT = 5
 
 
 class NewVisitorTest(LiveServerTestCase):
@@ -13,10 +15,18 @@ class NewVisitorTest(LiveServerTestCase):
     def tearDown(self):
         self.browser.quit()
 
-    def check_for_row_in_list_table(self, row_text):
-        table = self.browser.find_element(By.ID, "id_list_table")
-        rows = table.find_elements(By.TAG_NAME, "tr")
-        self.assertIn(row_text, [row.text for row in rows])
+    def wait_for_row_in_list_table(self, row_text):
+        start_time = time.time()
+        while True:
+            try:
+                table = self.browser.find_element(By.ID, "id_list_table")
+                rows = table.find_elements(By.TAG_NAME, "tr")
+                self.assertIn(row_text, [row.text for row in rows])
+                return
+            except (AssertionError, WebDriverException):
+                if time.time() - start_time > MAX_WAIT:
+                    raise
+                time.sleep(0.5)
 
     def test_can_start_a_todo_list(self):
         # エディスは、クールな新しいオンラインToDoアプリについて聞いた。
@@ -39,18 +49,16 @@ class NewVisitorTest(LiveServerTestCase):
         # 彼女がエンターキーを押すと、ページが更新され、次のように表示される。
         # 「1: クジャクの羽を買う」 がToDoリストの項目としてリストアップされる
         inputbox.send_keys(Keys.ENTER)
-        time.sleep(1)
-        self.check_for_row_in_list_table("1: 孔雀の羽を買う")
+        self.wait_for_row_in_list_table("1: 孔雀の羽を買う")
 
         # 別の項目を追加するよう促すテキストボックスが残っている。
         # 彼女は「孔雀の羽を使ってハエを作る」と入力した。
         inputbox = self.browser.find_element(By.ID, "id_new_item")
         inputbox.send_keys("孔雀の羽を使ってハエを作る")
         inputbox.send_keys(Keys.ENTER)
-        time.sleep(1)
 
         # ページが再び更新され、リストの両方の項目が表示される。
-        self.check_for_row_in_list_table("1: 孔雀の羽を買う")
-        self.check_for_row_in_list_table("2: 孔雀の羽を使ってハエを作る")
+        self.wait_for_row_in_list_table("1: 孔雀の羽を買う")
+        self.wait_for_row_in_list_table("2: 孔雀の羽を使ってハエを作る")
 
         # 満足した彼女は眠りにつく
