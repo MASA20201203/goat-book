@@ -37,16 +37,26 @@ class NewVisitorTest(unittest.TestCase):
 
         table = self.browser.find_element(By.ID, "id_list_table")
         rows = table.find_elements(By.TAG_NAME, "tr")
-        self.assertTrue(
-            any(row.text == "1: 孔雀の羽を買う" for row in rows),
-            "新しいToDo項目がテーブルに表示されませんでした",
-        )
+        self.assertIn("1: 孔雀の羽を買う", [row.text for row in rows])
 
         # 別の項目を追加するよう促すテキストボックスが残っている。
-        # 彼女は 「孔雀の羽を使ってハエを作る 」と入力した。
-        self.fail("Finish the test!")
+        # 彼女は「孔雀の羽を使ってハエを作る」と入力した。
+        inputbox = self.browser.find_element(By.ID, "id_new_item")
+        inputbox.send_keys("孔雀の羽を使ってハエを作る")
+        inputbox.send_keys(Keys.ENTER)
+        time.sleep(1)
 
         # ページが再び更新され、リストの両方の項目が表示される。
+        table = self.browser.find_element(By.ID, "id_list_table")
+        rows = table.find_elements(By.TAG_NAME, "tr")
+        self.assertIn(
+            "1: 孔雀の羽を買う",
+            [row.text for row in rows],
+        )
+        self.assertIn(
+            "2: 孔雀の羽を使ってハエを作る",
+            [row.text for row in rows],
+        )
 
         # 満足した彼女は眠りにつく
 
