@@ -1,4 +1,28 @@
 - hosts: all
+
   tasks:
-    - name: Ping to make sure we can talk to our server
-      ansible.builtin.ping:
+
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: yes
+      become: true
+
+    - name: Install containerd
+      ansible.builtin.apt:
+        name: containerd
+        state: latest
+      become: true
+
+    - name: Install docker
+      ansible.builtin.apt:
+        name: docker.io
+        state: latest
+      become: true
+
+    - name: Run test container
+      community.docker.docker_container:
+        name: testcontainer
+        state: started
+        image: busybox
+        command: echo hello world
+      become: true
