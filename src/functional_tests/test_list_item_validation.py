@@ -11,7 +11,7 @@ class ItemValidationTest(FunctionalTest):
         # エディスはホームページに行き、誤って空のリスト項目を送信しようとした。
         # 彼女は空の入力ボックスでEnterを押した
         self.browser.get(self.live_server_url)
-        self.browser.find_element(By.ID, "id_new_item").send_keys(Keys.ENTER)
+        self.browser.get_item_input_box().send_keys(Keys.ENTER)
 
         # ホームページがリフレッシュされ、エラーメッセージが表示された。
         self.wait_for(
@@ -22,12 +22,12 @@ class ItemValidationTest(FunctionalTest):
         )
 
         # 項目にテキストを追加して再試行すると、うまくいった
-        self.browser.find_element(By.ID, "id_new_item").send_keys("ミルクを買う")
-        self.browser.find_element(By.ID, "id_new_item").send_keys(Keys.ENTER)
+        self.browser.get_item_input_box().send_keys("ミルクを買う")
+        self.browser.get_item_input_box().send_keys(Keys.ENTER)
         self.wait_for_row_in_list_table("1: ミルクを買う")
 
         # ひょんなことから、彼女は2つ目の空白のリスト項目を投稿することにした。
-        self.browser.find_element(By.ID, "id_new_item").send_keys(Keys.ENTER)
+        self.browser.get_item_input_box().send_keys(Keys.ENTER)
 
         # 同じような警告がリストページに表示される
         self.wait_for(
@@ -38,7 +38,7 @@ class ItemValidationTest(FunctionalTest):
         )
 
         # テキストを入力することで修正できる
-        self.browser.find_element(By.ID, "id_new_item").send_keys("紅茶を作る")
-        self.browser.find_element(By.ID, "id_new_item").send_keys(Keys.ENTER)
+        self.browser.get_item_input_box().send_keys("紅茶を作る")
+        self.browser.get_item_input_box().send_keys(Keys.ENTER)
         self.wait_for_row_in_list_table("1: ミルクを買う")
         self.wait_for_row_in_list_table("2: 紅茶を作る")

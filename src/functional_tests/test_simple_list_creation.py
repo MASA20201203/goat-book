@@ -16,7 +16,7 @@ class NewVisitorTest(FunctionalTest):
         self.assertIn("To-Do", header_text)
 
         # すぐにToDoを入力するよう促される
-        inputbox = self.browser.find_element(By.ID, "id_new_item")
+        inputbox = self.get_item_input_box()
         self.assertEqual(inputbox.get_attribute("placeholder"), "Enter a to-do item")
 
         # 彼女はテキストボックスに「孔雀の羽を買う」と入力する
@@ -30,7 +30,7 @@ class NewVisitorTest(FunctionalTest):
 
         # 別の項目を追加するよう促すテキストボックスが残っている。
         # 彼女は「孔雀の羽を使ってハエを作る」と入力した。
-        inputbox = self.browser.find_element(By.ID, "id_new_item")
+        inputbox = self.get_item_input_box()
         inputbox.send_keys("孔雀の羽を使ってハエを作る")
         inputbox.send_keys(Keys.ENTER)
 
@@ -43,7 +43,7 @@ class NewVisitorTest(FunctionalTest):
     def test_multiple_users_can_start_lists_at_different_urls(self):
         # エディスは新しいToDoリストを作成する
         self.browser.get(self.live_server_url)
-        inputbox = self.browser.find_element(By.ID, "id_new_item")
+        inputbox = self.get_item_input_box()
         inputbox.send_keys("孔雀の羽を買う")
         inputbox.send_keys(Keys.ENTER)
         self.wait_for_row_in_list_table("1: 孔雀の羽を買う")
@@ -64,7 +64,7 @@ class NewVisitorTest(FunctionalTest):
         self.assertNotIn("孔雀の羽を使ってハエを作る", page_text)
 
         # フランシスは新しい項目を入力することで、新しいリストを開始する。彼はエディスより面白くない...。
-        inputbox = self.browser.find_element(By.ID, "id_new_item")
+        inputbox = self.get_item_input_box()
         inputbox.send_keys("ミルクを買う")
         inputbox.send_keys(Keys.ENTER)
         self.wait_for_row_in_list_table("1: ミルクを買う")
