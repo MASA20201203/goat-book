@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.shortcuts import render, redirect
 from lists.models import Item, List
 
@@ -13,7 +14,12 @@ def view_list(request, list_id):
 
 def new_list(request):
     nulist = List.objects.create()
-    Item.objects.create(text=request.POST["item_text"], list=nulist)
+    item = Item.objects.create(text=request.POST["item_text"], list=nulist)
+    try:
+        item.full_clean()
+    except ValidationError:
+        error = "You can't have an empty list item"
+        return render(request, "home.html", {"error": error})
     return redirect(f"/lists/{nulist.id}/")
 
 
