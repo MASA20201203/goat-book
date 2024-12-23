@@ -4,6 +4,7 @@
 
 * ch14 views.py からハードコードされたURLを削除する
 * ch14 list.html および home.html のフォームからハードコードされた URL を削除する
+* ch14 ビュー内の検証ロジックの重複を削除する
 
 ## Done
 
